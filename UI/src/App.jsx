@@ -4,6 +4,24 @@ import kid2 from './static/images/lucky/WhatsApp Image 2026-05-25 at 4.18.30 PM 
 import kid3 from './static/images/lucky/WhatsApp Image 2026-05-25 at 4.18.30 PM (2).jpeg'
 import kid4 from './static/images/lucky/WhatsApp Image 2026-05-25 at 4.18.30 PM (3).jpeg'
 import kid5 from './static/images/lucky/WhatsApp Image 2026-05-25 at 4.18.30 PM (4).jpeg'
+
+
+
+function useMobile(breakpoint = 768) {
+  const [mobile, setMobile] = useState(window.innerWidth <= breakpoint);
+
+  useEffect(() => {
+    const onResize = () => {
+      setMobile(window.innerWidth <= breakpoint);
+    };
+
+    window.addEventListener("resize", onResize);
+
+    return () => window.removeEventListener("resize", onResize);
+  }, [breakpoint]);
+
+  return mobile;
+}
 // ─── CONFIG — update these when you have real info ───────────────────────────
 const BRAND = "Lucky's Boutique";
 const TAGLINE = "Where Every Stitch Tells a Story";
@@ -202,6 +220,7 @@ function FloatingParticles() {
 
 // ─── WhatsApp Button ──────────────────────────────────────────────────────────
 function WhatsAppFAB() {
+  const isMobile = useMobile();
   return (
     <a
       href={`https://wa.me/${WHATSAPP}?text=Hi!%20I%20want%20to%20book%20an%20appointment%20at%20Lucky's%20Boutique`}
@@ -209,11 +228,13 @@ function WhatsAppFAB() {
       rel="noreferrer"
       title="Chat on WhatsApp"
       style={{
-        position: "fixed", bottom: 28, right: 28, zIndex: 200,
-        width: 58, height: 58, borderRadius: "50%",
+        position: "fixed", right: isMobile ? 16 : 28,
+        bottom: isMobile ? 16 : 28, zIndex: 200,
+        width: isMobile ? 52 : 58,
+height: isMobile ? 52 : 58, borderRadius: "50%",
         background: "linear-gradient(135deg, #25D366, #128C7E)",
         display: "flex", alignItems: "center", justifyContent: "center",
-        fontSize: 28,
+        fontSize: isMobile ? 24 : 28,
         boxShadow: "0 6px 24px rgba(37,211,102,0.45)",
         textDecoration: "none",
         animation: "waPulse 2.5s ease-in-out infinite",
@@ -226,84 +247,124 @@ function WhatsAppFAB() {
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const isMobile = useMobile();
+
   useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 50);
+    const fn = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", fn);
     return () => window.removeEventListener("scroll", fn);
   }, []);
-  const links = ["Home","Services","Gallery","Testimonials","Location","Contact"];
+
+  const links = [
+    "Home",
+    "Services",
+    "Gallery",
+    "Testimonials",
+    "Location",
+    "Contact",
+  ];
+
   return (
-    <nav style={{
-      position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
-      background: scrolled ? "rgba(255,245,251,0.96)" : "transparent",
-      backdropFilter: scrolled ? "blur(14px)" : "none",
-      boxShadow: scrolled ? "0 2px 24px rgba(180,80,120,0.12)" : "none",
-      transition: "all 0.4s ease",
-      padding: "0 5vw", height: 70,
-      display: "flex", alignItems: "center", justifyContent: "space-between",
-    }}>
-      {/* Logo */}
-      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-        <div style={{
-          width: 40, height: 40, borderRadius: "50%",
-          background: "linear-gradient(135deg, #E8409A, #B03070)",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          fontSize: 20, boxShadow: "0 4px 12px rgba(180,48,112,0.3)",
-        }}>✂️</div>
-        <div>
-          <div style={{
-            fontFamily: "'Playfair Display', serif",
-            fontSize: 18, fontWeight: 800,
-            color: scrolled ? "#B03070" : "#6A1040",
-            letterSpacing: 0.5, lineHeight: 1,
-          }}>Lucky's Boutique</div>
-          <div style={{
-            fontFamily: "'Lato', sans-serif",
-            fontSize: 10, letterSpacing: 2,
-            color: "#E87AAA", fontWeight: 700,
-            textTransform: "uppercase",
-          }}>Premium Tailoring</div>
-        </div>
+    <nav
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 100,
+        background: scrolled ? "rgba(255,245,251,.96)" : "transparent",
+        backdropFilter: "blur(12px)",
+        padding: "0 5vw",
+        height: 70,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+      }}
+    >
+      <div
+        style={{
+          fontWeight: 800,
+          fontSize: 20,
+          color: "#B03070",
+        }}
+      >
+        Lucky's Boutique
       </div>
 
-      {/* Desktop Nav */}
-      <div style={{ display: "flex", gap: 28, alignItems: "center" }}>
-        {links.map(l => (
-          <a key={l} href={`#${l.toLowerCase()}`} style={{
-            textDecoration: "none",
-            fontFamily: "'Lato', sans-serif",
-            fontSize: 14, fontWeight: 600,
-            color: scrolled ? "#5A3050" : "#6A1040",
-            transition: "color 0.2s",
-            paddingBottom: 2,
-            borderBottom: "2px solid transparent",
-          }}
-            onMouseEnter={e => { e.currentTarget.style.color = "#B03070"; e.currentTarget.style.borderBottomColor = "#E87AAA"; }}
-            onMouseLeave={e => { e.currentTarget.style.color = scrolled ? "#5A3050" : "#6A1040"; e.currentTarget.style.borderBottomColor = "transparent"; }}
-          >{l}</a>
-        ))}
-        <a href={`https://wa.me/${WHATSAPP}`} target="_blank" rel="noreferrer" style={{
-          padding: "9px 22px",
-          background: "linear-gradient(135deg, #E8409A, #B03070)",
-          color: "#fff", borderRadius: 50,
-          fontFamily: "'Lato', sans-serif",
-          fontWeight: 700, fontSize: 14,
-          textDecoration: "none",
-          boxShadow: "0 4px 14px rgba(180,48,112,0.3)",
-          transition: "transform 0.2s",
-        }}
-          onMouseEnter={e => e.currentTarget.style.transform = "scale(1.04)"}
-          onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
-        >Book Now</a>
-      </div>
+      {!isMobile && (
+        <div style={{ display: "flex", gap: 24 }}>
+          {links.map((l) => (
+            <a
+              key={l}
+              href={`#${l.toLowerCase()}`}
+              style={{
+                textDecoration: "none",
+                color: "#6A1040",
+                fontWeight: 600,
+              }}
+            >
+              {l}
+            </a>
+          ))}
+        </div>
+      )}
+
+      {isMobile && (
+        <>
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            style={{
+              border: "none",
+              background: "transparent",
+              fontSize: 26,
+              cursor: "pointer",
+            }}
+          >
+            ☰
+          </button>
+
+          {mobileOpen && (
+            <div
+              style={{
+                position: "absolute",
+                top: 70,
+                left: 0,
+                right: 0,
+                background: "#fff",
+                padding: 20,
+                display: "flex",
+                flexDirection: "column",
+                gap: 14,
+                boxShadow: "0 8px 30px rgba(0,0,0,.1)",
+              }}
+            >
+              {links.map((l) => (
+                <a
+                  key={l}
+                  href={`#${l.toLowerCase()}`}
+                  onClick={() => setMobileOpen(false)}
+                  style={{
+                    textDecoration: "none",
+                    color: "#6A1040",
+                    fontWeight: 600,
+                  }}
+                >
+                  {l}
+                </a>
+              ))}
+            </div>
+          )}
+        </>
+      )}
     </nav>
   );
 }
-
 // ─── Hero ─────────────────────────────────────────────────────────────────────
 function HeroSection() {
   const [loaded, setLoaded] = useState(false);
   useEffect(() => { setTimeout(() => setLoaded(true), 120); }, []);
+  const isMobile = useMobile();
+
   return (
     <section id="home" style={{
       minHeight: "100vh",
@@ -317,7 +378,8 @@ function HeroSection() {
       <div style={{ position:"absolute", top:"8%", right:"4%", width:450, height:450, borderRadius:"50%", background:"radial-gradient(circle, rgba(220,130,180,0.2) 0%, transparent 70%)", animation:"pulse 5s ease-in-out infinite", pointerEvents:"none" }} />
       <div style={{ position:"absolute", bottom:"8%", left:"2%", width:320, height:320, borderRadius:"50%", background:"radial-gradient(circle, rgba(150,80,220,0.14) 0%, transparent 70%)", animation:"pulse 7s ease-in-out infinite reverse", pointerEvents:"none" }} />
 
-      <div style={{ maxWidth: 1000, width:"100%", display:"grid", gridTemplateColumns:"1fr 1fr", gap:60, alignItems:"center" }}>
+      <div style={{ maxWidth: 1000, width:"100%", display:"grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
+    gap: isMobile ? 30 : 60, alignItems:"center" }}>
         {/* Text */}
         <div>
           <div style={{ opacity: loaded?1:0, transform: loaded?"translateY(0)":"translateY(24px)", transition:"all 0.7s ease 0.1s" }}>
@@ -400,7 +462,8 @@ function HeroSection() {
           display:"flex", justifyContent:"center",
         }}>
           <div style={{
-            width:320, height:400,
+            width: isMobile ? "100%" : 320,
+            height: isMobile ? 320 : 400,
             borderRadius:"60% 40% 55% 45% / 50% 55% 45% 55%",
             background:"linear-gradient(135deg,#FBCFE8,#F9A8D4,#F472B6)",
             display:"flex", alignItems:"center", justifyContent:"center",
@@ -448,6 +511,8 @@ function HeroSection() {
 // ─── Stats Bar ────────────────────────────────────────────────────────────────
 function StatsSection() {
   const [ref, visible] = useInView();
+  const isMobile = useMobile();
+
   const stats = [
     { value:"10+", label:"Years Experience", icon:"🏆" },
     { value:"500+", label:"Happy Customers", icon:"❤️" },
@@ -459,7 +524,9 @@ function StatsSection() {
       background:"linear-gradient(135deg,#B03070,#7A1050)",
       padding:"60px 5vw",
     }}>
-      <div style={{ maxWidth:960, margin:"0 auto", display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:20 }}>
+      <div style={{ maxWidth:960, margin:"0 auto", display:"grid", gridTemplateColumns: isMobile
+  ? "repeat(2,1fr)"
+  : "repeat(4,1fr)", gap:20 }}>
         {stats.map((s,i)=>(
           <div key={s.label} style={{
             textAlign:"center",
@@ -480,6 +547,8 @@ function StatsSection() {
 // ─── Services ─────────────────────────────────────────────────────────────────
 function ServicesSection() {
   const [hovered, setHovered] = useState(null);
+  const isMobile = useMobile();
+
   return (
     <section id="services" style={{ padding:"100px 5vw", background:"#FFF8FC" }}>
       <div style={{ maxWidth:960, margin:"0 auto" }}>
@@ -490,7 +559,10 @@ function ServicesSection() {
             Every garment is stitched with care, skill, and an eye for perfection.
           </p>
         </AnimatedSection>
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:24 }}>
+        <div style={{ display:"grid", gridTemplateColumns:
+  isMobile
+    ? "1fr"
+    : "repeat(3,1fr)", gap:24 }}>
           {SERVICES.map((s,i)=>(
             <AnimatedSection key={s.title} delay={i*0.09}>
               <div
@@ -527,77 +599,147 @@ function ServicesSection() {
 function GallerySection() {
   const [filter, setFilter] = useState("All");
   const [active, setActive] = useState(null);
-  const filtered = filter === "All" ? GALLERY_ITEMS : GALLERY_ITEMS.filter(g => g.category === filter);
+  const [selectedImage, setSelectedImage] = useState(null);
+
+  const filtered =
+    filter === "All"
+      ? GALLERY_ITEMS
+      : GALLERY_ITEMS.filter((g) => g.category === filter);
+
+  const isMobile = useMobile();
 
   return (
-    <section id="gallery" style={{
-      padding:"100px 5vw",
-      background:"linear-gradient(180deg,#FFF0F8,#FDE8F8)",
-    }}>
-      <div style={{ maxWidth:1000, margin:"0 auto" }}>
-        <AnimatedSection style={{ textAlign:"center", marginBottom:48 }}>
+    <section
+      id="gallery"
+      style={{
+        padding: "100px 5vw",
+        background: "linear-gradient(180deg,#FFF0F8,#FDE8F8)",
+      }}
+    >
+      <div style={{ maxWidth: 1000, margin: "0 auto" }}>
+        <AnimatedSection style={{ textAlign: "center", marginBottom: 48 }}>
           <SectionLabel text="Our Work" />
           <SectionHeading text="Stunning Creations" />
-          <p style={{ fontFamily:"'Lato', sans-serif", fontSize:15, color:"#8A5070", marginTop:12 }}>
-            Sample photos shown — replace with your actual work!
-          </p>
         </AnimatedSection>
 
-        {/* Filter Pills */}
-        <AnimatedSection delay={0.1} style={{ display:"flex", gap:10, flexWrap:"wrap", justifyContent:"center", marginBottom:40 }}>
-          {GALLERY_FILTERS.map(f=>(
-            <button key={f} onClick={()=>{ setFilter(f); setActive(null); }} style={{
-              padding:"8px 20px",
-              borderRadius:50,
-              border:"2px solid",
-              borderColor: filter===f?"transparent":"#F0C0DC",
-              background: filter===f ? "linear-gradient(135deg,#E8409A,#B03070)" : "#fff",
-              color: filter===f?"#fff":"#B03070",
-              fontFamily:"'Lato', sans-serif",
-              fontWeight:700, fontSize:13,
-              cursor:"pointer", transition:"all 0.25s",
-              letterSpacing:0.5,
-            }}>
+        {/* Filters */}
+        <AnimatedSection
+          delay={0.1}
+          style={{
+            display: "flex",
+            gap: 10,
+            flexWrap: "wrap",
+            justifyContent: "center",
+            marginBottom: 40,
+          }}
+        >
+          {GALLERY_FILTERS.map((f) => (
+            <button
+              key={f}
+              onClick={() => {
+                setFilter(f);
+                setActive(null);
+              }}
+              style={{
+                padding: "8px 20px",
+                borderRadius: 50,
+                border: "2px solid",
+                borderColor: filter === f ? "transparent" : "#F0C0DC",
+                background:
+                  filter === f
+                    ? "linear-gradient(135deg,#E8409A,#B03070)"
+                    : "#fff",
+                color: filter === f ? "#fff" : "#B03070",
+                fontWeight: 700,
+                cursor: "pointer",
+              }}
+            >
               {f}
             </button>
           ))}
         </AnimatedSection>
 
-        <div style={{
-          display:"grid",
-          gridTemplateColumns:"repeat(3,1fr)",
-          gap:20,
-        }}>
-          {filtered.map((item,i)=>(
-            <AnimatedSection key={item.label} delay={i*0.08}>
+        {/* Gallery grid */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: isMobile ? "1fr" : "repeat(3,1fr)",
+            gap: 20,
+          }}
+        >
+          {filtered.map((item, i) => (
+            <AnimatedSection key={i} delay={i * 0.08}>
               <GalleryImage
                 item={item}
-                active={active===i}
-                onClick={()=>setActive(active===i?null:i)}
+                active={active === i}
+                onClick={() => {
+                  setActive(i);
+                  setSelectedImage(item);
+                }}
               />
             </AnimatedSection>
           ))}
         </div>
 
-        <AnimatedSection delay={0.3} style={{ textAlign:"center", marginTop:44 }}>
-          <a href={`https://wa.me/${WHATSAPP}?text=Hi!%20I%20saw%20your%20gallery%20and%20want%20to%20discuss%20a%20design.`}
-            target="_blank" rel="noreferrer"
+        {/* Modal */}
+        {selectedImage && (
+          <div
+            onClick={() => setSelectedImage(null)}
             style={{
-              display:"inline-block", padding:"14px 36px",
-              background:"linear-gradient(135deg,#E8409A,#B03070)",
-              color:"#fff", borderRadius:50,
-              fontFamily:"'Lato', sans-serif",
-              fontWeight:700, fontSize:16,
-              textDecoration:"none",
-              boxShadow:"0 8px 24px rgba(180,48,112,0.32)",
-              transition:"transform 0.2s",
+              position: "fixed",
+              inset: 0,
+              background: "rgba(0,0,0,0.75)",
+              zIndex: 999,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: 20,
             }}
-            onMouseEnter={e=>e.currentTarget.style.transform="scale(1.04)"}
-            onMouseLeave={e=>e.currentTarget.style.transform="scale(1)"}
           >
-            💬 WhatsApp for Custom Design
-          </a>
-        </AnimatedSection>
+            <div
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                background: "#fff",
+                borderRadius: 20,
+                padding: 20,
+                maxWidth: "95vw",
+                maxHeight: "90vh",
+                textAlign: "center",
+                boxShadow: "0 20px 50px rgba(0,0,0,0.25)",
+              }}
+            >
+              <img
+                src={selectedImage.src}
+                alt={selectedImage.alt}
+                style={{
+                  maxWidth: "100%",
+                  maxHeight: "70vh",
+                  borderRadius: 16,
+                  objectFit: "contain",
+                }}
+              />
+
+              <div style={{ marginTop: 18 }}>
+                <button
+                  onClick={() => setSelectedImage(null)}
+                  style={{
+                    padding: "12px 28px",
+                    border: "none",
+                    borderRadius: 40,
+                    background:
+                      "linear-gradient(135deg,#E8409A,#B03070)",
+                    color: "#fff",
+                    fontWeight: 700,
+                    cursor: "pointer",
+                    fontSize: 15,
+                  }}
+                >
+                  Cancel ✕
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );
@@ -606,6 +748,7 @@ function GallerySection() {
 // ─── Testimonials ─────────────────────────────────────────────────────────────
 function TestimonialsSection() {
   const [current, setCurrent] = useState(0);
+  const isMobile = useMobile();
   useEffect(() => {
     const t = setInterval(()=>setCurrent(c=>(c+1)%TESTIMONIALS.length), 4500);
     return ()=>clearInterval(t);
@@ -618,7 +761,10 @@ function TestimonialsSection() {
           <SectionLabel text="Customer Love" />
           <SectionHeading text="What Our Clients Say" />
         </AnimatedSection>
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(2,1fr)", gap:24 }}>
+        <div style={{ display:"grid", gridTemplateColumns:
+  isMobile
+    ? "1fr"
+    : "repeat(2,1fr)", gap:24 }}>
           {TESTIMONIALS.map((t,i)=>(
             <AnimatedSection key={t.name} delay={i*0.12}>
               <div
@@ -684,6 +830,7 @@ function TestimonialsSection() {
 
 // ─── Location Section ─────────────────────────────────────────────────────────
 function LocationSection() {
+  const isMobile = useMobile();
   return (
     <section id="location" style={{
       padding:"100px 5vw",
@@ -698,14 +845,17 @@ function LocationSection() {
           </p>
         </AnimatedSection>
 
-        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:32, alignItems:"start" }}>
+        <div style={{ display:"grid", gridTemplateColumns:
+  isMobile
+    ? "1fr"
+    : "1fr 1fr", gap:32, alignItems:"start" }}>
           {/* Map embed */}
           <AnimatedSection delay={0.1}>
             <div style={{
               borderRadius:24, overflow:"hidden",
               border:"3px solid #F9D0E8",
               boxShadow:"0 12px 40px rgba(180,48,112,0.15)",
-              height:380,
+              height: isMobile ? 280 : 380,
               background:"linear-gradient(135deg,#FDE0EE,#F9C8E0)",
               display:"flex", flexDirection:"column",
               alignItems:"center", justifyContent:"center",
@@ -818,6 +968,7 @@ function LocationSection() {
 function ContactSection() {
   const [form, setForm] = useState({ name:"", phone:"", service:"", date:"", message:"" });
   const [sent, setSent] = useState(false);
+  const isMobile = useMobile();
 
   const handleSubmit = () => {
     if (!form.name || !form.phone) return;
@@ -860,7 +1011,7 @@ function ContactSection() {
           <div style={{
             background:"rgba(255,255,255,0.10)",
             backdropFilter:"blur(20px)",
-            borderRadius:28, padding:"44px 44px",
+            borderRadius:28, padding: isMobile ? "28px 20px" : "44px",
             border:"1px solid rgba(255,255,255,0.2)",
           }}>
             {sent && (
@@ -871,11 +1022,17 @@ function ContactSection() {
                 color:"#fff", fontSize:16, textAlign:"center", fontWeight:700,
               }}>✅ Opening WhatsApp... we'll see you there!</div>
             )}
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:18, marginBottom:18 }}>
+            <div style={{ display:"grid", gridTemplateColumns:
+  isMobile
+    ? "1fr"
+    : "1fr 1fr", gap:18, marginBottom:18 }}>
               <input style={inputStyle} type="text" placeholder="Your Name *" value={form.name} onChange={e=>setForm(p=>({...p,name:e.target.value}))} />
               <input style={inputStyle} type="tel" placeholder="Phone Number *" value={form.phone} onChange={e=>setForm(p=>({...p,phone:e.target.value}))} />
             </div>
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:18, marginBottom:18 }}>
+            <div style={{ display:"grid", gridTemplateColumns:
+  isMobile
+    ? "1fr"
+    : "1fr 1fr", gap:18, marginBottom:18 }}>
               <select style={{...inputStyle, color: form.service?"#fff":"rgba(255,255,255,0.55)"}}
                 value={form.service} onChange={e=>setForm(p=>({...p,service:e.target.value}))}>
                 <option value="" disabled>Select Service</option>
@@ -910,10 +1067,14 @@ function ContactSection() {
 
 // ─── Footer ───────────────────────────────────────────────────────────────────
 function Footer() {
+  const isMobile = useMobile();
   return (
     <footer style={{ background:"#3D0820", padding:"50px 5vw 30px" }}>
       <div style={{ maxWidth:960, margin:"0 auto" }}>
-        <div style={{ display:"grid", gridTemplateColumns:"2fr 1fr 1fr", gap:40, marginBottom:40 }}>
+        <div style={{ display:"grid", gridTemplateColumns:
+  isMobile
+    ? "1fr"
+    : "2fr 1fr 1fr", gap:40, marginBottom:40 }}>
           <div>
             <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:14 }}>
               <div style={{

@@ -25,9 +25,9 @@ function useMobile(breakpoint = 768) {
 // ─── CONFIG — update these when you have real info ───────────────────────────
 const BRAND = "Lucky's Boutique";
 const TAGLINE = "Where Every Stitch Tells a Story";
-const PHONE = "+91 9959557710";       // ← replace
-const WHATSAPP = "919959557710";       // ← replace (no + or spaces)
-const EMAIL = "lucky.boutique@gmail.com"; // ← replace
+const PHONE = "+91 9959557710";       
+const WHATSAPP = "919959557710";      
+const EMAIL = "lucky.boutique2022@gmail.com"
 const TIMING = "9 AM – 8 PM, Mon–Sat";
 // Location — paste your Google Maps embed src URL below (from maps.google.com → Share → Embed)
 const MAPS_EMBED_URL = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3804.4247083455543!2d78.29928257454357!3d17.53495479853848!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb8d000481b9bf%3A0x33c0125cf11edffc!2sLucky%20Ladies%20Tailor!5e0!3m2!1sen!2sin!4v1779706690187!5m2!1sen!2sin"
@@ -48,7 +48,7 @@ const GALLERY_ITEMS = [
     { src: kid5, alt: "Kids Frock", label: "Kids Frock", category: "Kids", accent: "#A0D4D8", emoji: "🎀" },
 ];
 
-const GALLERY_FILTERS = ["All", "Bridal", "Blouse", "Suits", "Kurti", "Gown", "Kids"];
+const GALLERY_FILTERS = ["All",  "Kids","Bridal", "Blouse", "Suits", "Kurti", "Gown"];
 
 const SERVICES = [
   { icon: "✂️", title: "Custom Stitching", desc: "Blouses, salwar suits, lehengas tailored to your exact measurements and style." },
@@ -660,26 +660,41 @@ function GallerySection() {
         </AnimatedSection>
 
         {/* Gallery grid */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: isMobile ? "1fr" : "repeat(3,1fr)",
-            gap: 20,
+{filtered.length > 0 ? (
+  <div
+    style={{
+      display: "grid",
+      gridTemplateColumns: isMobile ? "1fr" : "repeat(3,1fr)",
+      gap: 20,
+    }}
+  >
+    {filtered.map((item, i) => (
+      <AnimatedSection key={i} delay={i * 0.08}>
+        <GalleryImage
+          item={item}
+          active={active === i}
+          onClick={() => {
+            setActive(i);
+            setSelectedImage(item);
           }}
-        >
-          {filtered.map((item, i) => (
-            <AnimatedSection key={i} delay={i * 0.08}>
-              <GalleryImage
-                item={item}
-                active={active === i}
-                onClick={() => {
-                  setActive(i);
-                  setSelectedImage(item);
-                }}
-              />
-            </AnimatedSection>
-          ))}
-        </div>
+        />
+      </AnimatedSection>
+    ))}
+  </div>
+) : (
+  <div
+    style={{
+      textAlign: "center",
+      padding: "40px",
+      borderRadius: "20px",
+      background: "#fff",
+      color: "#B03070",
+      fontWeight: 600,
+    }}
+  >
+      No gallery photos available for selected Category
+  </div>
+)}
 
         {/* Modal */}
         {selectedImage && (
